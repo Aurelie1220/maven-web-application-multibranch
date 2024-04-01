@@ -1,1 +1,38 @@
+pipeline {
+    agent any
+    stages {
+        stage('validate') {
+            steps {
+                echo 'validating the application'
+                sh "mvn validate"
+            }
+        }
 
+stage('compile') {
+            steps {
+               echo 'compiling the application'
+               sh "mvn compile"
+            }
+        }
+stage('build') {
+            steps {
+               echo 'packaging the application'
+               sh "mvn package"
+            }
+        }
+
+stage('test') {
+            steps {
+               echo 'validating the application'
+               sh "mvn sonar:sonar"
+            }
+        }
+
+stage('deploy') {
+            steps {
+               echo 'deploying the application'
+               sh "mvn deploy"
+            }
+        }
+    }
+}
