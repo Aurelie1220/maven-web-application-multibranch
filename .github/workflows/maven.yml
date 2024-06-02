@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: ec2-user-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Code
@@ -21,15 +21,15 @@ jobs:
       with:
         java-version: '11'
 
-    - name: Build with Gradle
-      run: ./gradlew build
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
 
     - name: Run Tests
-      run: ./gradlew test
+      run: mvn test
 
   deploy_to_nexus:
     needs: build
-    runs-on: ec2-user-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Code
@@ -40,18 +40,18 @@ jobs:
       with:
         java-version: '11'
 
-    - name: Build with Gradle
-      run: ./gradlew build
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
 
     - name: Deploy Artifacts to Nexus
-      run: ./gradlew publish
+      run: mvn deploy
       env:
         NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
         NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
 
   deploy_to_production:
     needs: deploy_to_nexus
-    runs-on: ec2-user-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Code
